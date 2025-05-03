@@ -1,5 +1,24 @@
 ```hcl
-#
+###############################################################################
+# Detect the OS
+###############################################################################
+
+# Full path to the helper that exists only on Windows
+locals {
+  windows_helper = "${abspath(path.module)}\\printf.cmd"
+}
+
+# If the helper file exists, we’re on Windows; otherwise assume Linux
+data "external" "detect_os" {
+  program = fileexists(local.windows_helper) ? [local.windows_helper, "{\"os\":\"Windows\"}"] : ["printf", "{\"os\":\"Linux\"}"]
+}
+
+locals {
+  os         = data.external.detect_os.result.os
+  is_windows = lower(local.os) == "windows"
+  is_linux   = lower(local.os) == "linux"
+}
+
 ```
 ## Requirements
 
@@ -7,7 +26,9 @@ No requirements.
 
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_external"></a> [external](#provider\_external) | n/a |
 
 ## Modules
 
@@ -15,17 +36,18 @@ No modules.
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [external_external.detect_os](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
 
 ## Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_location"></a> [location](#input\_location) | The location for this resource to be put in | `string` | n/a | yes |
-| <a name="input_name"></a> [name](#input\_name) | The name of the VNet gateway | `string` | n/a | yes |
-| <a name="input_rg_name"></a> [rg\_name](#input\_rg\_name) | The name of the resource group, this module does not create a resource group, it is expecting the value of a resource group already exists | `string` | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | A map of the tags to use on the resources that are deployed with this module. | `map(string)` | n/a | yes |
+No inputs.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_is_linux"></a> [is\_linux](#output\_is\_linux) | True if the OS is Linux |
+| <a name="output_is_windows"></a> [is\_windows](#output\_is\_windows) | True if the OS is Windows |
+| <a name="output_os"></a> [os](#output\_os) | The OS that is running the commands |

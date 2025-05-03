@@ -13,8 +13,8 @@ data "external" "detect_os" {
 }
 
 locals {
-  os          = data.external.detect_os.result.os
-  is_windows  = lower(local.os) == "windows"
-  is_linux    = lower(local.os) == "linux"
+  os         = data.external.detect_os.result.os
+  is_windows = lower(local.os) == "windows"
+  is_linux   = lower(local.os) == "linux"
 }
 
